@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>My Awesome Profile Generator</title>
+  <script src="../blockly/blockly_compressed.js"></script>
+  <script src="../blockly/blocks_compressed.js"></script>
+  <script src="../blockly/javascript_compressed.js"></script>
+  <script src="../blockly/msg/js/en.js"></script>
+
+  <script src="blocks/my_blocks.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+    table {
+      height: 100%;
+      width: 100%;
+    }
+    #blocklyArea {
+      height: 99%;
+    }
+    #profileArea {
+      display: table;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    #profileTextRow {
+      display: table-row;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    #profileBottonRow {
+      display: table-row;
+      height: 100px;
+    }
+    #profileText {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #ddd;
+      margin: 0;
+      padding: 0;
+      -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+      -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+      box-sizing: border-box;         /* Opera/IE 8+ */
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <td><h1>Make blocks here</h1></td>
+      <td style="width: 30em"><h1>Show profile here</h1></td>
+    </tr>
+    <tr>
+      <td id="blocklyArea"></td>
+      <td style="vertical-align: top; margin: 0; padding: 0">
+        <div  id="profileArea">
+          <div id="profileTextRow">
+            <textarea readonly id="profileText"></textarea>
+          </div>
+          <div id="profileBottonRow">
+            <button onclick="showProfile()"><h1>Run Profile</h1></button>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div id="blocklyDiv" style="position: absolute"></div>
+
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <category name="Blocks" colour="210">
+    <block type="profile_root_block">
+      <field name="block_name">New Block</field>
+    </block>
+    <block type="profile_probability_block">
+      <field name="prob_val">0.5</field>
+    </block>
+  </category>
+  <category name="Actions" colour="120">
+    <block type="action_template_no_arg"></block>
+    <block type="action_template_with_arg"></block>
+    <block type="argument_template"></block>
+    <block type="math_number">
+      <field name="NUM">0</field>
+    </block>
+    <block type="text">
+      <field name="TEXT"></field>
+    </block>
+  </category>
+  <category name="Variables" colour="330" custom="VARIABLE"></category>
+</xml>
+
+  <script>
+    //////
+    // Setup the workspace and toolbox.
+    var blocklyArea = document.getElementById('blocklyArea');
+    var blocklyDiv = document.getElementById('blocklyDiv');
+
+    var toolbox = document.getElementById("toolbox");
+    var options = { 
+      toolbox : toolbox, 
+      collapse : true, 
+      comments : true, 
+      disable : true, 
+      maxBlocks : Infinity, 
+      trashcan : true, 
+      horizontalLayout : false, 
+      toolboxPosition : 'start', 
+      css : true, 
+      media : '../blockly/media/', 
+      rtl : false, 
+      scrollbars : true, 
+      sounds : true, 
+      oneBasedIndex : true
+    };
+
+    var profileWorkspace = Blockly.inject(blocklyDiv, options);
+
+    //////
+    // Function to resize the workspace.
+    var onresize = function(e) {
+      // Compute the absolute coordinates and dimensions of blocklyArea.
+      var element = blocklyArea;
+      var x = 0;
+      var y = 0;
+      do {
+        x += element.offsetLeft;
+        y += element.offsetTop;
+        element = element.offsetParent;
+      } while (element);
+      // Position blocklyDiv over blocklyArea.
+      blocklyDiv.style.left = x + 'px';
+      blocklyDiv.style.top = y + 'px';
+      blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+      blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+    };
+    window.addEventListener('resize', onresize, false);
+    onresize();
+    Blockly.svgResize(profileWorkspace);
+
+    //////
+    // Function to populate the action toolbox.
+    /*
+    * Construct the blocks required by the flyout for the colours category.
+    * @param {!Blockly.Workspace} workspace The workspace this flyout is for.
+    * @return {!Array.<!Element>} Array of XML block elements.
+    */
+    actionsFlyoutCallback = function(workspace) {
+      // Returns an array of hex colours, e.g. ['#4286f4', '#ef0447']
+      var xmlList = [];
+      for (var i = 0.1; i < 1; i+=0.01) {
+        var blockText = '<xml>' +
+            '<block type="profile_prefix_probability">' +
+            '<field name="prob_value">' + i + '</field>' +
+            '</block>' +
+            '</xml>';
+        var block = Blockly.Xml.textToDom(blockText).firstChild;
+        xmlList.push(block);
+      }
+      
+      return xmlList;
+    };
+
+    profileWorkspace.registerToolboxCategoryCallback(
+        'TEST_ACTIONS', actionsFlyoutCallback);
+
+
+    //////
+    // Function to show/run profiles.
+    function showProfile() {
+      // Generate JavaScript code and display it.
+      Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+      var code = Blockly.JavaScript.workspaceToCode(profileWorkspace);
+      document.getElementById('profileText').value = code;
+    }
+
+    // Handle any workspace change.
+    function onWorkspaceChange(event) {
+      // alert(event.type);
+      if (event.type == Blockly.Events.BLOCK_CHANGE ||
+          event.type == Blockly.Events.BLOCK_MOVE   ||
+          event.type == Blockly.Events.BLOCK_DELETE ||
+          event.type == Blockly.Events.VAR_CREATE   ||
+          event.type == Blockly.Events.VAR_DELETE   ||
+          event.type == Blockly.Events.VAR_RENAME)
+      {
+        showProfile();
+      }
+    }
+    profileWorkspace.addChangeListener(onWorkspaceChange);
+
+  </script>
+
+</body>
+</html>
