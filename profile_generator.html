@@ -6,7 +6,7 @@
   <title>My Awesome Profile Generator</title>
   <script src="../blockly/blockly_compressed.js"></script>
   <script src="../blockly/blocks_compressed.js"></script>
-  <script src="../blockly/javascript_compressed.js"></script>
+  <script src="../blockly/python_compressed.js"></script>
   <script src="../blockly/msg/js/en.js"></script>
 
   <script src="blocks/my_blocks.js"></script>
@@ -88,24 +88,50 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Blocks" colour="210">
     <block type="profile_root_block">
-      <field name="block_name">New Block</field>
+      <field name="block_name">Actions</field>
     </block>
     <block type="profile_probability_block">
       <field name="prob_val">0.5</field>
     </block>
   </category>
-  <category name="Actions" colour="120">
-    <block type="action_template_no_arg"></block>
-    <block type="action_template_with_arg"></block>
-    <block type="argument_template"></block>
-    <block type="math_number">
+  <category name="Android Phone" colour="120">
+    <block type="action_template_no_arg" colour="120"></block>
+    <block type="action_template_with_arg" colour="120">
+      <value name="action_arg2">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+      <value name="action_arg3">
+        <shadow type="text">
+          <field name="TEXT"></field>
+        </shadow>
+      </value>
+    </block>
+  </category>
+  <category name="Apollo" colour="150">
+    <block type="action_template_no_arg" colour="150"></block>
+    <block type="action_template_with_arg" colour="150">
+      <value name="action_arg2">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+      <value name="action_arg3">
+        <shadow type="text">
+          <field name="TEXT"></field>
+        </shadow>
+      </value>
+    </block>
+  </category>
+  <category name="Values" colour="330">
+    <block type="math_number" colour="330">
       <field name="NUM">0</field>
     </block>
-    <block type="text">
+    <block type="text" colour="330">
       <field name="TEXT"></field>
     </block>
   </category>
-  <category name="Variables" colour="330" custom="VARIABLE"></category>
 </xml>
 
   <script>
@@ -187,8 +213,8 @@
     // Function to show/run profiles.
     function showProfile() {
       // Generate JavaScript code and display it.
-      Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-      var code = Blockly.JavaScript.workspaceToCode(profileWorkspace);
+      Blockly.Python.INFINITE_LOOP_TRAP = null;
+      var code = Blockly.Python.workspaceToCode(profileWorkspace);
       document.getElementById('profileText').value = code;
     }
 
